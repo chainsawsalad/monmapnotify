@@ -52,7 +52,7 @@ Notification.requestPermission(function () {
     var raidWatch = {
         '42.355472,-71.066417': 'Soldiers and Sailors Monument', /* verified */
         '42.35605,-71.064867': 'Tadpole Playground Archway and Frog Statue', /* verified */
-        '42.356045,-71.061453': 'DTX Sprint Store',
+        '42.356045,-71.061453': 'DTX Sprint Store', /* verified */
         '42.354665,-71.069458': 'Children Frolicking Fountain in Boston Public Garden', /* verified */
         '42.353813,-71.071089': 'George Washington Statue', /* verified */
         '42.352584,-71.068654': 'Thomas Cass Statue', /* verified */
