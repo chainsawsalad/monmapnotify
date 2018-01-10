@@ -62,7 +62,7 @@ Notification.requestPermission(function () {
         '42.35722,-71.073752': 'Hatch Shell', /* verified */
         '42.356132,-71.07489': 'Esplanade Playplace', /* verified */
         '42.374493,-71.12017': 'Harvard Square Starbucks', /* verified */
-        '42.388381,-71.118494': 'Porter Square Sprint Store',
+        '42.388381,-71.118494': 'Porter Square Sprint Store', /* verified */
         '42.364216,-71.15699': 'Arsenal Mall Starbucks', /* verified */
     };
 
