@@ -52,7 +52,7 @@ Notification.requestPermission(function () {
     var raidWatch = {
         '42.355472,-71.066417': 'Soldiers and Sailors Monument', /* verified */
         '42.35605,-71.064867': 'Tadpole Playground Archway and Frog Statue', /* verified */
-        '42.356045,-71.061453': 'DTX Sprint Store',
+        '42.356045,-71.061453': 'DTX Sprint Store', /* verified */
         '42.354665,-71.069458': 'Children Frolicking Fountain in Boston Public Garden', /* verified */
         '42.353813,-71.071089': 'George Washington Statue', /* verified */
         '42.352584,-71.068654': 'Thomas Cass Statue', /* verified */
@@ -62,7 +62,7 @@ Notification.requestPermission(function () {
         '42.35722,-71.073752': 'Hatch Shell', /* verified */
         '42.356132,-71.07489': 'Esplanade Playplace', /* verified */
         '42.374493,-71.12017': 'Harvard Square Starbucks', /* verified */
-        '42.388381,-71.118494': 'Porter Square Sprint Store',
+        '42.388381,-71.118494': 'Porter Square Sprint Store', /* verified */
         '42.364216,-71.15699': 'Arsenal Mall Starbucks', /* verified */
     };
 
