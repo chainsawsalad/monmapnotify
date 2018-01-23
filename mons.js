@@ -31,6 +31,7 @@ Notification.requestPermission(function () {
                 requireInteraction: true
             });
             var pid = setTimeout(function () {
+                console.log('Cleaning up notification: `' + pokemonKey + '`');
                 notification.close();
                 closeNotification();
                 delete notificationTracker[pokemonKey];
@@ -49,7 +50,7 @@ Notification.requestPermission(function () {
         }
     }
 
-    var raidWatch = {
+    var gymWatch = {
         '42.355472,-71.066417': 'Soldiers and Sailors Monument', /* verified */
         '42.35605,-71.064867': 'Tadpole Playground Archway and Frog Statue', /* verified */
         '42.356045,-71.061453': 'DTX Sprint Store', /* verified */
@@ -67,9 +68,12 @@ Notification.requestPermission(function () {
     };
 
     function processRaid(raid) {
+        var pokemonId = raid.pokemon_id;
+        var startMillis = parseInt(raid.raid_start + '000', 10);
         var gymKey = raid.lat + ',' + raid.lng;
-        if (raidWatch[gymKey] && !notificationTracker[gymKey]) {
-            var startMillis = parseInt(raid.raid_start + '000', 10);
+        var raidKey = gymKey + ':' + startMillis + ':' + pokemonId;
+
+        if (gymWatch[gymKey] && !notificationTracker[raidKey]) {
             var start = new Date(startMillis);
             var endMillis = parseInt(raid.raid_end + '000', 10);
             var end = new Date(endMillis);
@@ -78,30 +82,31 @@ Notification.requestPermission(function () {
             var notificationBody;
             var overMillis;
 
-            if (raid.pokemon_id === '0' && startMillis >= nowMillis) {
+            if (pokemonId === '0' && startMillis >= nowMillis) {
                 overMillis = startMillis;
                 notificationIcon = 'http://www.pngall.com/wp-content/uploads/2016/04/' + raid.level + '-Number-PNG-180x180.png';
                 notificationBody = 'Start at ' + start.getHours() + ':' + formatMinutes(start.getMinutes());
-            } else if (raid.pokemon_id !== '0' && endMillis >= nowMillis) {
+            } else if (pokemonId !== '0' && endMillis >= nowMillis) {
                 overMillis = endMillis;
-                notificationIcon = 'https://cdn.skeptical.cf/pokehunter/images/pokemon/theartificial/' + raid.pokemon_id + '.png';
-                notificationBody = getPokemonNameFromId(raid.pokemon_id) + ' (' + raid.level + ') ends at ' + end.getHours() + ':' + formatMinutes(end.getMinutes());
+                notificationIcon = 'https://cdn.skeptical.cf/pokehunter/images/pokemon/theartificial/' + pokemonId + '.png';
+                notificationBody = getPokemonNameFromId(pokemonId) + ' (' + raid.level + ') ends at ' + end.getHours() + ':' + formatMinutes(end.getMinutes());
             } else {
                 return;
             }
 
             console.log('Raid', raid);
 
-            var notification = new Notification(raidWatch[gymKey], {
+            var notification = new Notification(gymWatch[gymKey], {
                 icon: notificationIcon,
                 body: notificationBody,
                 tag: gymKey,
                 requireInteraction: true
             });
             var pid = setTimeout(function () {
+                console.log('Cleaning up notification: `' + raidKey + '`');
                 notification.close();
                 closeNotification();
-                delete notificationTracker[gymKey];
+                delete notificationTracker[raidKey];
             }, overMillis - (+new Date()));
             var closeNotification = function () {
                 clearTimeout(pid);
@@ -113,11 +118,11 @@ Notification.requestPermission(function () {
             };
             notification.onclose = closeNotification;
 
-            notificationTracker[gymKey] = notification;
+            notificationTracker[raidKey] = notification;
         }
     }
 
-    var notificationTracker = {};
+    window.notificationTracker = {};
     $(document).ajaxSuccess(function (e, rawData, request) {
         var response = rawData.responseJSON;
         console.log('Processing...', response);
