@@ -65,6 +65,7 @@ Notification.requestPermission(function () {
         '42.374493,-71.12017': 'Harvard Square Starbucks', /* verified */
         '42.388381,-71.118494': 'Porter Square Sprint Store', /* verified */
         '42.364216,-71.15699': 'Arsenal Mall Starbucks', /* verified */
+        '42.353557,-71.0545': 'Os Gemeos Mural',
     };
 
     function processRaid(raid) {
