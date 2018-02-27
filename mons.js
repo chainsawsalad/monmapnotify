@@ -67,6 +67,7 @@ Notification.requestPermission(function () {
         '42.364216,-71.15699': 'Arsenal Mall Starbucks', /* verified */
         '42.353557,-71.0545': 'Os Gemeos Mural',
         '42.352364,-71.057433': 'John F Fitzgerald Expressway Plaque',
+        '42.354716,-71.047467': 'Ship Silhouettes',
     };
 
     function processRaid(raid) {
