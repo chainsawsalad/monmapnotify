@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const notifier = require('node-notifier');
+const moment = require('moment');
 
 const notificationCache = {};
 
@@ -45,15 +46,25 @@ const fetchData = () => {
     })
     .then((result) => result.json())
     .then((json) => {
+        console.log('\n\n\nChecking at %s...\n\n', moment().format('MMMM Do YYYY, h:mm:ss a'));
         json.data.gyms.forEach((gym) => {
             if (gym.ex_raid_eligible) {
-                if (!notificationCache[gym.name + gym.raid_battle_timestamp]) {
+                const isActive = gym.raid_battle_timestamp * 1000 < +new Date();
+                const title = gym.name + ' Tier ' + gym.raid_level;
+                const message = isActive ?
+                    'Despawinging at ' + moment(gym.raid_end_timestamp * 1000).format('MMMM Do YYYY, h:mm:ss a') :
+                    'Hatching at ' + moment(gym.raid_battle_timestamp * 1000).format('MMMM Do YYYY, h:mm:ss a')
+                if (!notificationCache[gym.name + gym.raid_battle_timestamp + isActive]) {
                     notifier.notify({
-                        title: gym.name + ' Tier ' + gym.raid_level,
-                        message: new Date(gym.raid_battle_timestamp).toDateString()
+                        title: title,
+                        message: message,
+                        icon: gym.url,
+                        timeout: 10,
                     });
-                    notificationCache[gym.name + gym.raid_battle_timestamp] = true;
+                    notificationCache[gym.name + gym.raid_battle_timestamp + isActive] = true;
                 }
+                // console.log(gym);
+                console.log('%s\n%s\n-------\n', title, message);
             }
         });
         json.data.pokemon.forEach((pokemon) => {
@@ -64,7 +75,7 @@ const fetchData = () => {
             console.log(pokemon);
         });
 
-        setTimeout(fetchData, 1000 * 60 * 5);
+        setTimeout(fetchData, 1000 * 60 * 2);
     });
 };
 
