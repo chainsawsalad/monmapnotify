@@ -24,6 +24,9 @@ Notification.requestPermission(function () {
             var name = getPokemonNameFromId(pokemon.pokemon_id);
             var despawnMillis = parseInt(pokemon.despawn + '000', 10);
             var despawn = new Date(despawnMillis);
+
+            console.log('Pokemon `%s` despawns in %s minutes', pokemonKey, (despawnMillis - (+new Date())) / 1000 / 60, pokemon);
+
             var notification = new Notification(name + ((+pokemon.attack) + (+pokemon.defence) + (+pokemon.stamina) === 45 ? ' 100%' : '') + ' - L' + pokemon.level + ' - ' + pokemon.attack + '/' + pokemon.defence + '/' + pokemon.stamina, {
                 icon: 'https://cdn.skeptical.cf/pokehunter/images/pokemon/theartificial/' + pokemon.pokemon_id + '.png',
                 body: 'Despawn at ' + despawn.getHours() + ':' + formatMinutes(despawn.getMinutes()),
@@ -32,16 +35,19 @@ Notification.requestPermission(function () {
             });
             var pid = setTimeout(function () {
                 console.log('Cleaning up notification: `' + pokemonKey + '`');
-                notification.close();
-                closeNotification();
                 delete notificationTracker[pokemonKey];
+                notification.close();
             }, despawnMillis + 15000 - (+new Date()));
             var closeNotification = function () {
-                clearTimeout(pid);
-                pid = null;
+                console.log('Dismissing pokemon `%s`', pokemonKey);
+                /* clearTimeout(pid); */
+                /* pid = null; */
+                /* delete notificationTracker[pokemonKey]; */
             };
 
-            notification.onclick = function () {
+            notification.onclick = function (event) {
+                console.log('Clicking pokemon `%s`', pokemonKey);
+                event.preventDefault();
                 window.open('https://www.google.com/maps?q=' + pokemon.lat + ',' + pokemon.lng);
             };
             notification.onclose = closeNotification;
@@ -83,10 +89,12 @@ Notification.requestPermission(function () {
             var overMillis;
 
             if (pokemonId === '0' && startMillis >= nowMillis) {
+                console.log('Raid spawned %s', raidKey);
                 overMillis = startMillis;
                 notificationIcon = 'http://www.pngall.com/wp-content/uploads/2016/04/' + raid.level + '-Number-PNG-180x180.png';
                 notificationBody = 'Start at ' + start.getHours() + ':' + formatMinutes(start.getMinutes());
             } else if (pokemonId !== '0' && endMillis >= nowMillis) {
+                console.log('Raid started %s', raidKey);
                 overMillis = endMillis;
                 notificationIcon = 'https://cdn.skeptical.cf/pokehunter/images/pokemon/theartificial/' + pokemonId + '.png';
                 notificationBody = getPokemonNameFromId(pokemonId) + ' (' + raid.level + ') ends at ' + end.getHours() + ':' + formatMinutes(end.getMinutes());
@@ -94,26 +102,29 @@ Notification.requestPermission(function () {
                 return;
             }
 
-            console.log('Raid', raid);
+            console.log('Raid `%s` ends in %s minutes', raidKey, (overMillis - nowMillis) / 1000 / 60, raid);
 
             var notification = new Notification(gymWatch[gymKey], {
                 icon: notificationIcon,
                 body: notificationBody,
-                tag: gymKey,
+                tag: raidKey,
                 requireInteraction: true
             });
             var pid = setTimeout(function () {
                 console.log('Cleaning up notification: `' + raidKey + '`');
-                notification.close();
-                closeNotification();
                 delete notificationTracker[raidKey];
-            }, overMillis - (+new Date()));
+                notification.close();
+            }, overMillis - nowMillis);
             var closeNotification = function () {
-                clearTimeout(pid);
-                pid = null;
+                console.log('Dismissing raid `%s`', raidKey);
+                /* clearTimeout(pid); */
+                /* pid = null; */
+                /* delete notificationTracker[raidKey]; */
             };
 
-            notification.onclick = function () {
+            notification.onclick = function (event) {
+                console.log('Clicking raid `%s`', raidKey);
+                event.preventDefault();
                 window.open('https://www.google.com/maps?q=' + raid.lat + ',' + raid.lng);
             };
             notification.onclose = closeNotification;
